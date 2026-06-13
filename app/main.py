@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from app.store import store
+from app.replication import replicate_set
 
 app = FastAPI()
 
@@ -12,6 +13,7 @@ def home():
 @app.post("/set")
 def set_value(key: str, value: str):
     store.set(key, value)
+    replicate_set(key, value)
     return {
         "status": "success",
         "key": key,
@@ -42,4 +44,14 @@ def delete_value(key: str):
     return {
         "status": "deleted",
         "key": key
+    }
+    
+    
+@app.post("/replicate")
+def replicate(key: str, value: str):
+
+    store.set(key, value)
+
+    return {
+        "status": "replicated"
     }
