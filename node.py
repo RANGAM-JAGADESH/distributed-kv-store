@@ -1,7 +1,11 @@
 import sys
+import os
 import uvicorn
 
-port = int(sys.argv[1])
+node_id = sys.argv[1]
+port = int(sys.argv[2])
+
+os.environ["NODE_ID"] = node_id
 
 uvicorn.run(
     "app.main:app",
@@ -9,3 +13,6 @@ uvicorn.run(
     port=port,
     reload=False
 )
+
+print(f"Node ID: {node_id}")
+print(f"Port: {port}")

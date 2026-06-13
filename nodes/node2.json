@@ -1,4 +1,5 @@
 {
-    "node_id": "node2",
-    "port": 8001
+  "node_id": "node2",
+  "role": "follower",
+  "port": 8001
 }

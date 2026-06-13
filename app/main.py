@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from app.store import store
 from app.replication import replicate_set
-
+from app.cluster import is_leader
 app = FastAPI()
 
 
@@ -10,10 +10,19 @@ def home():
     return {"message": "Distributed KV Store Running"}
 
 
+
+
 @app.post("/set")
 def set_value(key: str, value: str):
+
+    if not is_leader():
+        return {
+            "error": "Only leader can accept writes"
+        }
+
     store.set(key, value)
     replicate_set(key, value)
+
     return {
         "status": "success",
         "key": key,
