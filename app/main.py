@@ -2,8 +2,12 @@ from fastapi import FastAPI
 from app.store import store
 from app.replication import replicate_set
 from app.cluster import is_leader
+from app.heartbeat import start_heartbeat
+from datetime import datetime
+last_heartbeat = datetime.now()
 app = FastAPI()
-
+if is_leader():
+    start_heartbeat()
 
 @app.get("/")
 def home():
@@ -63,4 +67,22 @@ def replicate(key: str, value: str):
 
     return {
         "status": "replicated"
+    }
+    
+@app.get("/heartbeat")
+def heartbeat():
+
+    global last_heartbeat
+
+    last_heartbeat = datetime.now()
+
+    return {
+        "status": "alive"
+    }
+    
+@app.get("/status")
+def status():
+
+    return {
+        "leader": is_leader()
     }
