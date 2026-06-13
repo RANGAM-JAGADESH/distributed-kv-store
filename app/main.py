@@ -4,7 +4,7 @@ from app.replication import replicate_set
 from app.cluster import is_leader
 from app.heartbeat import start_heartbeat
 from datetime import datetime
-
+import app.raft_state as raft
 from app.election import start_election_monitor
 if not is_leader():
     start_election_monitor()
@@ -89,4 +89,19 @@ def status():
 
     return {
         "leader": is_leader()
+    }
+
+@app.post("/request_vote")
+def request_vote(candidate_id: str):
+
+    if raft.voted_for is None:
+
+        raft.voted_for = candidate_id
+
+        return {
+            "vote_granted": True
+        }
+
+    return {
+        "vote_granted": False
     }
