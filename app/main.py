@@ -4,6 +4,10 @@ from app.replication import replicate_set
 from app.cluster import is_leader
 from app.heartbeat import start_heartbeat
 from datetime import datetime
+
+from app.election import start_election_monitor
+if not is_leader():
+    start_election_monitor()
 last_heartbeat = datetime.now()
 app = FastAPI()
 if is_leader():
@@ -72,9 +76,9 @@ def replicate(key: str, value: str):
 @app.get("/heartbeat")
 def heartbeat():
 
-    global last_heartbeat
+    import app.heartbeat as hb
 
-    last_heartbeat = datetime.now()
+    hb.last_heartbeat = datetime.now()
 
     return {
         "status": "alive"

@@ -1,6 +1,9 @@
 import threading
 import time
 import requests
+from datetime import datetime
+
+last_heartbeat = datetime.now()
 
 FOLLOWERS = [
     "http://127.0.0.1:8001",
