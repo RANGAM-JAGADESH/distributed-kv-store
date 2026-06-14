@@ -1,0 +1,20 @@
+[
+    {
+        "index": 1,
+        "operation": "SET",
+        "key": "name",
+        "value": "Jashu"
+    },
+    {
+        "index": 2,
+        "operation": "SET",
+        "key": "city",
+        "value": "kothapeta"
+    },
+    {
+        "index": 3,
+        "operation": "SET",
+        "key": "city",
+        "value": "kothapeta"
+    }
+]

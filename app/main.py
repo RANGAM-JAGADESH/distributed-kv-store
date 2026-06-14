@@ -1,15 +1,17 @@
 from fastapi import FastAPI
 from datetime import datetime
-
+from app.log_manager import get_logs
 from app.store import store
 from app.replication import replicate_set
+from app.log_manager import append_log
 from app.cluster import is_leader
 from app.heartbeat import (
     start_heartbeat,
     configure_followers
 )
 from app.election import start_election_monitor
-
+# from app.log_manager import append_log
+from app.replication import replicate_log
 import app.raft_state as raft
 
 app = FastAPI()
@@ -67,6 +69,14 @@ def set_value(key: str, value: str):
             "error": "Only leader can accept writes"
         }
 
+    entry = append_log(
+        "SET",
+        key,
+        value
+    )
+
+    replicate_log(entry)
+
     store.set(key, value)
 
     replicate_set(key, value)
@@ -76,7 +86,6 @@ def set_value(key: str, value: str):
         "key": key,
         "value": value
     }
-
 
 # ==========================
 # GET
@@ -194,4 +203,22 @@ def leader():
     return {
         "leader": raft.current_leader,
         "role": raft.current_role
+    }
+    
+@app.get("/logs")
+def logs():
+
+    return get_logs()
+
+@app.post("/replicate_log")
+def replicate_log(entry: dict):
+
+    append_log(
+        entry["operation"],
+        entry["key"],
+        entry["value"]
+    )
+
+    return {
+        "status": "log replicated"
     }

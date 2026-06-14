@@ -19,3 +19,17 @@ def replicate_set(key, value):
             )
         except:
             pass
+        
+def replicate_log(entry):
+
+    for node in REPLICA_NODES:
+
+        try:
+
+            requests.post(
+                f"{node}/replicate_log",
+                json=entry
+            )
+
+        except:
+            pass
