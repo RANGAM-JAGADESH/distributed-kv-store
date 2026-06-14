@@ -1,34 +1,74 @@
 from fastapi import FastAPI
+from datetime import datetime
+
 from app.store import store
 from app.replication import replicate_set
 from app.cluster import is_leader
-from app.heartbeat import start_heartbeat
-from datetime import datetime
-import app.raft_state as raft
+from app.heartbeat import (
+    start_heartbeat,
+    configure_followers
+)
 from app.election import start_election_monitor
-if not is_leader():
-    start_election_monitor()
-last_heartbeat = datetime.now()
+
+import app.raft_state as raft
+
 app = FastAPI()
-if is_leader():
-    start_heartbeat()
+
+
+# ==========================
+# Startup Event
+# ==========================
+
+@app.on_event("startup")
+def startup_event():
+
+    print("Starting Node...")
+
+    if is_leader():
+
+        print("Leader Node Started")
+
+        configure_followers([
+            "http://127.0.0.1:8001",
+            "http://127.0.0.1:8002"
+        ])
+
+        start_heartbeat()
+
+    else:
+
+        print("Follower Node Started")
+
+        start_election_monitor()
+
+
+# ==========================
+# Home
+# ==========================
 
 @app.get("/")
 def home():
-    return {"message": "Distributed KV Store Running"}
+
+    return {
+        "message": "Distributed KV Store Running"
+    }
 
 
-
+# ==========================
+# SET
+# ==========================
 
 @app.post("/set")
 def set_value(key: str, value: str):
 
     if not is_leader():
+
         return {
             "error": "Only leader can accept writes"
         }
 
     store.set(key, value)
+
     replicate_set(key, value)
 
     return {
@@ -38,12 +78,20 @@ def set_value(key: str, value: str):
     }
 
 
+# ==========================
+# GET
+# ==========================
+
 @app.get("/get/{key}")
 def get_value(key: str):
+
     value = store.get(key)
 
     if value is None:
-        return {"error": "Key not found"}
+
+        return {
+            "error": "Key not found"
+        }
 
     return {
         "key": key,
@@ -51,19 +99,31 @@ def get_value(key: str):
     }
 
 
+# ==========================
+# DELETE
+# ==========================
+
 @app.delete("/delete/{key}")
 def delete_value(key: str):
+
     deleted = store.delete(key)
 
     if not deleted:
-        return {"error": "Key not found"}
+
+        return {
+            "error": "Key not found"
+        }
 
     return {
         "status": "deleted",
         "key": key
     }
-    
-    
+
+
+# ==========================
+# REPLICATION
+# ==========================
+
 @app.post("/replicate")
 def replicate(key: str, value: str):
 
@@ -72,7 +132,12 @@ def replicate(key: str, value: str):
     return {
         "status": "replicated"
     }
-    
+
+
+# ==========================
+# HEARTBEAT
+# ==========================
+
 @app.get("/heartbeat")
 def heartbeat():
 
@@ -80,16 +145,28 @@ def heartbeat():
 
     hb.last_heartbeat = datetime.now()
 
+    raft.voted_for = None
+
     return {
         "status": "alive"
     }
-    
+
+
+# ==========================
+# STATUS
+# ==========================
+
 @app.get("/status")
 def status():
 
     return {
         "leader": is_leader()
     }
+
+
+# ==========================
+# REQUEST VOTE
+# ==========================
 
 @app.post("/request_vote")
 def request_vote(candidate_id: str):
@@ -104,4 +181,17 @@ def request_vote(candidate_id: str):
 
     return {
         "vote_granted": False
+    }
+
+
+# ==========================
+# LEADER INFO
+# ==========================
+
+@app.get("/leader")
+def leader():
+
+    return {
+        "leader": raft.current_leader,
+        "role": raft.current_role
     }

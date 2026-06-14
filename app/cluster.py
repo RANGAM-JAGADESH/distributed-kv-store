@@ -1,9 +1,7 @@
 import os
+import app.raft_state as raft
 
-LEADER_NODE = "node1"
-
-def get_current_node():
-    return os.getenv("NODE_ID")
+CURRENT_NODE = os.getenv("NODE_ID", "node1")
 
 def is_leader():
-    return get_current_node() == LEADER_NODE
+    return CURRENT_NODE == raft.current_leader

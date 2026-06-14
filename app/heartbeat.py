@@ -3,12 +3,17 @@ import time
 import requests
 from datetime import datetime
 
+FOLLOWERS = []
+
 last_heartbeat = datetime.now()
 
-FOLLOWERS = [
-    "http://127.0.0.1:8001",
-    "http://127.0.0.1:8002"
-]
+
+def configure_followers(followers):
+
+    global FOLLOWERS
+
+    FOLLOWERS = followers
+
 
 def send_heartbeat():
 
@@ -17,6 +22,7 @@ def send_heartbeat():
         for follower in FOLLOWERS:
 
             try:
+
                 requests.get(
                     f"{follower}/heartbeat"
                 )
@@ -25,6 +31,7 @@ def send_heartbeat():
                 pass
 
         time.sleep(2)
+
 
 def start_heartbeat():
 
