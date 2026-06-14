@@ -1,19 +1,30 @@
 from fastapi import FastAPI
 from datetime import datetime
-from app.log_manager import get_logs
+
 from app.store import store
-from app.replication import replicate_set
-from app.log_manager import append_log
 from app.cluster import is_leader
+
 from app.heartbeat import (
     start_heartbeat,
     configure_followers
 )
-from app.election import start_election_monitor
-# from app.log_manager import append_log
-from app.replication import replicate_log
-import app.raft_state as raft
 
+from app.election import start_election_monitor
+
+from app.replication import (
+    replicate_set,
+    replicate_log,
+    replicate_commit
+)
+
+from app.log_manager import (
+    get_logs,
+    append_log,
+    commit_log,
+    save_log_entry
+)
+
+import app.raft_state as raft
 app = FastAPI()
 
 
@@ -75,11 +86,39 @@ def set_value(key: str, value: str):
         value
     )
 
-    replicate_log(entry)
+    acks = replicate_log(entry)
+    print(f"ACKs received: {acks}")
+    print(f"Committing index: {entry['index']}")
 
-    store.set(key, value)
+    print(
+        f"ACKs received: {acks}"
+    )
 
-    replicate_set(key, value)
+    if acks >= 2:
+
+        commit_log(
+        entry["index"]
+    )
+
+        replicate_commit(
+            entry["index"]
+        )
+
+        store.set(
+            key,
+            value
+        )
+
+        replicate_set(
+            key,
+            value
+        )
+
+    else:
+
+        return {
+            "error": "Majority ACK not reached"
+        }
 
     return {
         "status": "success",
@@ -209,16 +248,20 @@ def leader():
 def logs():
 
     return get_logs()
-
 @app.post("/replicate_log")
-def replicate_log(entry: dict):
+def receive_log(entry: dict):
 
-    append_log(
-        entry["operation"],
-        entry["key"],
-        entry["value"]
-    )
+    save_log_entry(entry)
 
     return {
         "status": "log replicated"
+    }
+    
+@app.post("/commit_log")
+def receive_commit(index: int):
+
+    commit_log(index)
+
+    return {
+        "status": "committed"
     }

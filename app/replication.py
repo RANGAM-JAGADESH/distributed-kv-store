@@ -22,13 +22,38 @@ def replicate_set(key, value):
         
 def replicate_log(entry):
 
+    acknowledgements = 1
+
+    for node in REPLICA_NODES:
+
+        try:
+
+            response = requests.post(
+                f"{node}/replicate_log",
+                json=entry
+            )
+
+            if response.status_code == 200:
+
+                acknowledgements += 1
+
+        except:
+            pass
+
+    return acknowledgements
+
+
+def replicate_commit(index):
+
     for node in REPLICA_NODES:
 
         try:
 
             requests.post(
-                f"{node}/replicate_log",
-                json=entry
+                f"{node}/commit_log",
+                params={
+                    "index": index
+                }
             )
 
         except:

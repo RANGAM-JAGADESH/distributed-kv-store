@@ -1,0 +1,9 @@
+[
+    {
+        "index": 1,
+        "operation": "SET",
+        "key": "name",
+        "value": "ganga",
+        "committed": true
+    }
+]
