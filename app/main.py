@@ -8,7 +8,7 @@ from app.heartbeat import (
     start_heartbeat,
     configure_followers
 )
-
+from app.recovery import recover_state
 from app.election import start_election_monitor
 
 from app.replication import (
@@ -26,7 +26,7 @@ from app.log_manager import (
 
 import app.raft_state as raft
 app = FastAPI()
-
+recover_state()
 
 # ==========================
 # Startup Event
@@ -272,4 +272,14 @@ def get_commit_index():
 
     return {
         "commit_index": raft.commit_index
+    }
+    
+    
+@app.get("/recover")
+def recover():
+
+    recover_state()
+
+    return {
+        "status": "recovered"
     }
