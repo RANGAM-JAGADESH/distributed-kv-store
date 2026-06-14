@@ -98,12 +98,13 @@ def set_value(key: str, value: str):
 
         commit_log(
         entry["index"]
-    )
+        )
+
+        raft.commit_index = entry["index"]
 
         replicate_commit(
             entry["index"]
         )
-
         store.set(
             key,
             value
@@ -264,4 +265,11 @@ def receive_commit(index: int):
 
     return {
         "status": "committed"
+    }
+    
+@app.get("/commit_index")
+def get_commit_index():
+
+    return {
+        "commit_index": raft.commit_index
     }
