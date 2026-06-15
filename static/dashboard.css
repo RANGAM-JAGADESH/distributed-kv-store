@@ -86,3 +86,39 @@ padding:20px;
 overflow:auto;
 
 }
+
+.cluster{
+
+display:flex;
+
+justify-content:center;
+
+gap:50px;
+
+margin-top:30px;
+
+}
+
+.node{
+
+padding:20px;
+
+border-radius:10px;
+
+background:#2c3e50;
+
+width:150px;
+
+}
+
+.online{
+
+background:#27ae60 !important;
+
+}
+
+.offline{
+
+background:#c0392b !important;
+
+}

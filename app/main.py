@@ -30,10 +30,18 @@ from fastapi import Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
+from fastapi.middleware.cors import CORSMiddleware
 
 
 
 app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 templates = Jinja2Templates(
     directory="templates"
 )
@@ -309,3 +317,12 @@ def dashboard():
     return FileResponse(
         "static/dashboard.html"
     )
+    
+    
+@app.get("/health")
+def health():
+
+    return {
+        "status": "online",
+        "node": raft.current_leader
+    }
