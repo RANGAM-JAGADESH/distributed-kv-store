@@ -5,29 +5,20 @@
 
     <title>Distributed KV Store Dashboard</title>
 
-    <link
-        rel="stylesheet"
-        href="/static/dashboard.css">
+    <link rel="stylesheet" href="/static/dashboard.css">
 
 </head>
 
 <body>
 
-    <h1>
-        Distributed KV Store Dashboard
-    </h1>
+    <h1>Distributed KV Store Dashboard</h1>
 
     <!-- Topology View -->
-
-    <div class="topology">
+    <div class="topology" id="topology">
 
         <div id="top-node1" class="node">
-            Node1
+            👑 Node1
         </div>
-
-        <div class="line left"></div>
-
-        <div class="line right"></div>
 
         <div id="top-node2" class="node">
             Node2
@@ -37,60 +28,48 @@
             Node3
         </div>
 
+        <!-- SVG heartbeat lines drawn by JS using real node positions -->
+        <svg id="hb-svg" aria-hidden="true">
+            <defs>
+                <radialGradient id="pglow" cx="50%" cy="50%" r="50%">
+                    <stop offset="0%"   stop-color="#00ff88" stop-opacity="1"/>
+                    <stop offset="100%" stop-color="#00ff88" stop-opacity="0"/>
+                </radialGradient>
+            </defs>
+        </svg>
+
     </div>
 
     <div class="info">
 
-        <h2 id="leader">
-            Leader: Loading...
-        </h2>
+        <h2 id="leader">Leader: Loading...</h2>
 
-        <h2 id="role">
-            Role: Loading...
-        </h2>
+        <h2 id="role">Role: Loading...</h2>
 
-        <h2 id="commit-index">
-            0
-        </h2>
+        <h2 id="commit-index">0</h2>
 
     </div>
 
     <hr>
 
     <!-- Cluster Status -->
-
     <h3>Cluster Nodes</h3>
 
     <div class="cluster">
 
         <div id="node1" class="node">
-
             Node1
-
-            <div id="status1">
-                Checking...
-            </div>
-
+            <div id="status1">Checking...</div>
         </div>
 
         <div id="node2" class="node">
-
             Node2
-
-            <div id="status2">
-                Checking...
-            </div>
-
+            <div id="status2">Checking...</div>
         </div>
 
         <div id="node3" class="node">
-
             Node3
-
-            <div id="status3">
-                Checking...
-            </div>
-
+            <div id="status3">Checking...</div>
         </div>
 
     </div>
@@ -103,6 +82,6 @@
 
     <script src="/static/dashboard.js"></script>
 
-</body>
+</body> 
 
 </html>

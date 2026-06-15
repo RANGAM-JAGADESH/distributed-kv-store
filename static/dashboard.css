@@ -1,124 +1,139 @@
-body{
-
-font-family:Arial;
-background:#10141f;
-color:white;
-text-align:center;
-
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background: #0b1020;
+    color: white;
+    text-align: center;
 }
 
-.topology{
-
-margin-top:40px;
-
+/* TITLE */
+h1 {
+    margin-top: 30px;
+    margin-bottom: 50px;
 }
 
-.node{
-
-width:120px;
-height:120px;
-
-border-radius:50%;
-
-background:#1abc9c;
-
-display:inline-flex;
-
-justify-content:center;
-align-items:center;
-
-font-size:20px;
-font-weight:bold;
-
-margin:40px;
-
-transition:.3s;
-
+/* =========================
+   TOPOLOGY
+========================= */
+.topology {
+    position: relative;
+    width: 100%;
+    height: 350px;
 }
 
-.line{
-
-height:4px;
-
-background:white;
-
-width:200px;
-
-display:inline-block;
-
-margin-bottom:60px;
-
+/* NODE DESIGN */
+.node {
+    width: 140px;
+    height: 140px;
+    border-radius: 20px;
+    background: #243447;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    font-weight: bold;
+    transition: 0.4s;
 }
 
-.left{
-margin-right:-10px;
+/* NODE POSITIONS */
+#top-node1 {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
-.right{
-margin-left:-10px;
+#top-node2 {
+    position: absolute;
+    bottom: 20px;
+    left: 25%;
+    transform: translateX(-50%);
 }
 
-.online{
-
-box-shadow:
-0 0 30px lime;
-
+#top-node3 {
+    position: absolute;
+    bottom: 20px;
+    right: 25%;
+    transform: translateX(50%);
 }
 
-.leader{
-
-background:#e67e22;
-
+/* =========================
+   SVG HEARTBEAT OVERLAY
+   (lines drawn by JS using real node coords)
+========================= */
+#hb-svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: visible;
 }
 
-pre{
-
-text-align:left;
-
-width:80%;
-
-margin:auto;
-
-background:#222;
-
-padding:20px;
-
-overflow:auto;
-
+/* =========================
+   STATUS
+========================= */
+.info {
+    margin-top: 30px;
 }
 
-.cluster{
-
-display:flex;
-
-justify-content:center;
-
-gap:50px;
-
-margin-top:30px;
-
+.info h2 {
+    margin: 10px;
 }
 
-.node{
-
-padding:20px;
-
-border-radius:10px;
-
-background:#2c3e50;
-
-width:150px;
-
+/* =========================
+   CLUSTER CARDS
+========================= */
+.cluster {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin-top: 30px;
 }
 
-.online{
-
-background:#27ae60 !important;
-
+.cluster .node {
+    width: 180px;
+    height: 120px;
+    flex-direction: column;
+    font-size: 22px;
 }
 
-.offline{
+/* ONLINE */
+.online {
+    background: #27ae60 !important;
+    box-shadow: 0 0 20px #27ae60;
+}
 
-background:#c0392b !important;
+/* OFFLINE */
+.offline {
+    background: #c0392b !important;
+    box-shadow: 0 0 20px #c0392b;
+}
 
+/* LEADER */
+.leader {
+    box-shadow:
+        0 0 15px gold,
+        0 0 30px gold,
+        0 0 50px gold;
+    border: 3px solid gold;
+}
+
+/* LOGS */
+pre {
+    width: 85%;
+    margin: auto;
+    text-align: left;
+    background: #161b2d;
+    padding: 20px;
+    border-radius: 10px;
+    overflow: auto;
+}
+
+/* HR */
+hr {
+    margin-top: 40px;
+    margin-bottom: 40px;
 }
