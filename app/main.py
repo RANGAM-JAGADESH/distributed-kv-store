@@ -25,7 +25,24 @@ from app.log_manager import (
 )
 
 import app.raft_state as raft
+from fastapi.responses import FileResponse
+from fastapi import Request
+from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
+from fastapi.staticfiles import StaticFiles
+
+
+
 app = FastAPI()
+templates = Jinja2Templates(
+    directory="templates"
+)
+
+app.mount(
+    "/static",
+    StaticFiles(directory="static"),
+    name="static"
+)
 recover_state()
 
 # ==========================
@@ -283,3 +300,12 @@ def recover():
     return {
         "status": "recovered"
     }
+    
+
+
+@app.get("/dashboard")
+def dashboard():
+
+    return FileResponse(
+        "static/dashboard.html"
+    )

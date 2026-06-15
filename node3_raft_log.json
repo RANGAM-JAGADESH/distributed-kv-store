@@ -19,5 +19,12 @@
         "key": "name",
         "value": "sai",
         "committed": true
+    },
+    {
+        "index": 4,
+        "operation": "SET",
+        "key": "name",
+        "value": "jaga",
+        "committed": true
     }
 ]
