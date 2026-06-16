@@ -3,7 +3,9 @@ from app.snapshot_manager import (
     load_snapshot,
     truncate_logs
 )
-
+from app.rejoin_manager import (
+    restore_snapshot_from_leader
+)
 from app.sync_manager import sync_from_leader
 
 from app.state_machine import recover_state_machine
@@ -113,6 +115,7 @@ def startup_event():
         print("Follower Node Started")
         sync_from_leader()
         start_election_monitor()
+        restore_snapshot_from_leader()
 
 
 # ==========================
@@ -487,3 +490,16 @@ def get_missing_logs(last_index: int):
     ]
 
     return missing
+
+
+@app.get("/snapshot_data")
+def snapshot_data():
+
+    import json
+
+    with open(
+        "snapshot.json",
+        "r"
+    ) as f:
+
+        return json.load(f)
