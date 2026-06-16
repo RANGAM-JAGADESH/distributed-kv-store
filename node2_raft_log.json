@@ -54,5 +54,26 @@
         "key": "test",
         "value": "0403",
         "committed": true
+    },
+    {
+        "index": 8,
+        "operation": "SET",
+        "key": "h",
+        "value": "8",
+        "committed": true
+    },
+    {
+        "index": 9,
+        "operation": "SET",
+        "key": "i",
+        "value": "9",
+        "committed": true
+    },
+    {
+        "index": 10,
+        "operation": "SET",
+        "key": "j",
+        "value": "10",
+        "committed": true
     }
 ]

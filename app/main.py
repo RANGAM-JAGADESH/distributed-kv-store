@@ -41,6 +41,7 @@ from app.event_manager import (
     increment_election
 )
 
+
 from app.snapshot_manager import (
     create_snapshot,
     load_snapshot
@@ -151,8 +152,19 @@ def set_value(key: str, value: str):
         replicate_commit(entry["index"])
         store.set(key, value)
         replicate_set(key, value)
+        logs = get_logs()
 
-        add_event(f"✅ Log Committed  (index={entry['index']})")
+        if len(logs) >= 10:
+
+            print(
+                "📸 Auto Snapshot Triggered"
+            )
+
+            create_snapshot()
+
+            truncate_logs()
+
+            add_event(f"✅ Log Committed  (index={entry['index']})")
 
     else:
         return {"error": "Majority ACK not reached"}
