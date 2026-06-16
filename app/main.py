@@ -1,4 +1,8 @@
-
+from app.snapshot_manager import (
+    create_snapshot,
+    load_snapshot,
+    truncate_logs
+)
 
 
 
@@ -436,10 +440,14 @@ def test123():
     }
     
     
+
+    
 @app.get("/snapshot")
 def snapshot():
 
     create_snapshot()
+
+    truncate_logs()
 
     return {
         "status": "snapshot created"

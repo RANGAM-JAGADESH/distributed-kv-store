@@ -1,5 +1,8 @@
 import json
 from app.store import store
+from app.log_manager import LOG_FILE
+
+
 
 SNAPSHOT_FILE = "snapshot.json"
 
@@ -46,3 +49,25 @@ def load_snapshot():
         print(
             "No Snapshot Found"
         )
+        
+        
+
+
+def truncate_logs():
+
+    print("LOG FILE =", LOG_FILE)
+
+    with open(
+        LOG_FILE,
+        "w"
+    ) as f:
+
+        json.dump(
+            [],
+            f,
+            indent=4
+        )
+
+    print(
+        "🗑️ Logs truncated after snapshot"
+    )
