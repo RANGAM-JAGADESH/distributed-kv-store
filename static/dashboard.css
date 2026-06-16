@@ -839,3 +839,37 @@ pre {
     border-top: 1px solid var(--border);
     margin-top: 40px;
 }
+
+
+.health-panel{
+
+    display:flex;
+
+    justify-content:center;
+
+    gap:30px;
+
+    margin-top:20px;
+
+}
+
+.health-card{
+
+    background:#1f2937;
+
+    padding:20px;
+
+    width:220px;
+
+    border-radius:15px;
+
+    box-shadow:
+    0 0 20px rgba(0,255,136,.2);
+
+}
+
+.health-card h1{
+
+    color:#00ff88;
+
+}

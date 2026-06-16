@@ -503,3 +503,69 @@ def snapshot_data():
     ) as f:
 
         return json.load(f)
+    
+@app.get("/cluster_health")
+def cluster_health():
+
+    import requests
+
+    healthy = 0
+
+    nodes = [
+
+        "http://127.0.0.1:8000",
+        "http://127.0.0.1:8001",
+        "http://127.0.0.1:8002"
+
+    ]
+
+    node_status = []
+
+    for node in nodes:
+
+        try:
+
+            requests.get(
+                f"{node}/health",
+                timeout=1
+            )
+
+            healthy += 1
+
+            node_status.append(
+                "online"
+            )
+
+        except:
+
+            node_status.append(
+                "offline"
+            )
+
+    health_percent = int(
+        (healthy / len(nodes))
+        * 100
+    )
+
+    return {
+
+        "health":
+        health_percent,
+
+        "healthy_nodes":
+        healthy,
+
+        "total_nodes":
+        len(nodes),
+
+        "status":
+        (
+            "HEALTHY"
+            if healthy == 3
+            else "DEGRADED"
+        ),
+
+        "nodes":
+        node_status
+
+    }

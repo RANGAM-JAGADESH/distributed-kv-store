@@ -584,6 +584,29 @@ async function refreshDashboard() {
 
     // 8 ── Redraw SVG lines ──────────────────────────────────
     drawHeartbeatLines();
+
+    let healthResponse =
+    await fetch("/cluster_health");
+
+    let healthData =
+    await healthResponse.json();
+
+    document
+    .getElementById("health-percent")
+    .innerText =
+    healthData.health + "%";
+
+    document
+    .getElementById("cluster-status")
+    .innerText =
+    healthData.status;
+
+    document
+    .getElementById("healthy-count")
+    .innerText =
+    healthData.healthy_nodes +
+    "/" +
+    healthData.total_nodes;
 }
 
 
