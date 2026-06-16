@@ -1,34 +1,18 @@
 <!DOCTYPE html>
 <html>
-
 <head>
-
     <title>Distributed KV Store Dashboard</title>
-
     <link rel="stylesheet" href="/static/dashboard.css">
-
 </head>
-
 <body>
 
     <h1>Distributed KV Store Dashboard</h1>
 
-    <!-- Topology View -->
+    <!-- TOPOLOGY -->
     <div class="topology" id="topology">
-
-        <div id="top-node1" class="node">
-            👑 Node1
-        </div>
-
-        <div id="top-node2" class="node">
-            Node2
-        </div>
-
-        <div id="top-node3" class="node">
-            Node3
-        </div>
-
-        <!-- SVG heartbeat lines drawn by JS using real node positions -->
+        <div id="top-node1" class="node">👑 Node1</div>
+        <div id="top-node2" class="node">Node2</div>
+        <div id="top-node3" class="node">Node3</div>
         <svg id="hb-svg" aria-hidden="true">
             <defs>
                 <radialGradient id="pglow" cx="50%" cy="50%" r="50%">
@@ -37,87 +21,89 @@
                 </radialGradient>
             </defs>
         </svg>
-
     </div>
 
-    <hr>
-
-<div class="metrics-container">
-
-    <div class="metric-card">
-
-        <h3>Total Logs</h3>
-
-        <h1 id="totalLogs">
-            0
-        </h1>
-
-    </div>
-
-    <div class="metric-card">
-
-        <h3>Committed Logs</h3>
-
-        <h1 id="committedLogs">
-            0
-        </h1>
-
-    </div>
-
-    <div class="metric-card">
-
-        <h3>Commit Index</h3>
-
-        <h1 id="commitIndex">
-            0
-        </h1>
-
-    </div>
-
-</div>
-
+    <!-- LEADER / ROLE / COMMIT -->
     <div class="info">
-
         <h2 id="leader">Leader: Loading...</h2>
-
         <h2 id="role">Role: Loading...</h2>
-
         <h2 id="commit-index">0</h2>
-
     </div>
 
     <hr>
 
-    <!-- Cluster Status -->
+    <!-- METRICS CARDS -->
+    <h3>📊 Cluster Metrics</h3>
+    <div class="metrics-grid">
+        <div class="metric-card">
+            <div class="metric-label">Total Logs</div>
+            <div class="metric-value" id="totalLogs">0</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-label">Committed Logs</div>
+            <div class="metric-value committed" id="committedLogs">0</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-label">Pending Logs</div>
+            <div class="metric-value pending" id="pendingLogs">0</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-label">Commit Index</div>
+            <div class="metric-value" id="commitIndex">0</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-label">💓 Heartbeats Sent</div>
+            <div class="metric-value heartbeat" id="heartbeatCount">0</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-label">🗳️ Elections</div>
+            <div class="metric-value election" id="electionCount">0</div>
+        </div>
+    </div>
+
+    <hr>
+
+    <!-- CLUSTER HEALTH -->
+    <h3>🩺 Cluster Health</h3>
+    <div class="health-section">
+        <div class="health-label" id="healthLabel">Checking...</div>
+        <div class="health-bar-track">
+            <div class="health-bar-fill" id="healthBar" style="width:0%"></div>
+        </div>
+        <div class="health-percent" id="healthPercent">0%</div>
+    </div>
+
+    <hr>
+
+    <!-- CLUSTER NODES -->
     <h3>Cluster Nodes</h3>
-
     <div class="cluster">
-
         <div id="node1" class="node">
             Node1
             <div id="status1">Checking...</div>
         </div>
-
         <div id="node2" class="node">
             Node2
             <div id="status2">Checking...</div>
         </div>
-
         <div id="node3" class="node">
             Node3
             <div id="status3">Checking...</div>
         </div>
-
     </div>
 
     <hr>
 
-    <h2>Logs</h2>
+    <!-- LIVE EVENT STREAM -->
+    <h3>📜 Live Event Stream</h3>
+    <div id="events" class="events-list"></div>
 
+    <hr>
+
+    <!-- LOGS -->
+    <h2>Logs</h2>
     <pre id="logs"></pre>
 
     <script src="/static/dashboard.js"></script>
-
-</body> 
-
+</body>
 </html>

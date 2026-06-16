@@ -1,3 +1,8 @@
+/* ========================
+   BASE
+======================== */
+* { box-sizing: border-box; }
+
 body {
     margin: 0;
     padding: 0;
@@ -7,22 +12,19 @@ body {
     text-align: center;
 }
 
-/* TITLE */
-h1 {
-    margin-top: 30px;
-    margin-bottom: 50px;
-}
+h1 { margin-top: 30px; margin-bottom: 50px; }
+h3 { color: #aac4ff; margin: 10px 0 20px; }
+hr { margin: 40px auto; border-color: #1e2a45; width: 90%; }
 
-/* =========================
+/* ========================
    TOPOLOGY
-========================= */
+======================== */
 .topology {
     position: relative;
     width: 100%;
     height: 350px;
 }
 
-/* NODE DESIGN */
 .node {
     width: 140px;
     height: 140px;
@@ -36,21 +38,18 @@ h1 {
     transition: 0.4s;
 }
 
-/* NODE POSITIONS */
 #top-node1 {
     position: absolute;
     top: 20px;
     left: 50%;
     transform: translateX(-50%);
 }
-
 #top-node2 {
     position: absolute;
     bottom: 20px;
     left: 25%;
     transform: translateX(-50%);
 }
-
 #top-node3 {
     position: absolute;
     bottom: 20px;
@@ -58,34 +57,110 @@ h1 {
     transform: translateX(50%);
 }
 
-/* =========================
-   SVG HEARTBEAT OVERLAY
-   (lines drawn by JS using real node coords)
-========================= */
 #hb-svg {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
     pointer-events: none;
     overflow: visible;
 }
 
-/* =========================
-   STATUS
-========================= */
-.info {
-    margin-top: 30px;
+/* ========================
+   INFO
+======================== */
+.info { margin-top: 30px; }
+.info h2 { margin: 10px; }
+
+/* ========================
+   METRICS GRID
+======================== */
+.metrics-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    margin: 0 auto 10px;
+    max-width: 960px;
+    padding: 0 20px;
 }
 
-.info h2 {
-    margin: 10px;
+.metric-card {
+    background: #161b2d;
+    border: 1px solid #1e2a45;
+    border-radius: 16px;
+    padding: 24px 32px;
+    min-width: 150px;
+    flex: 1 1 140px;
+    max-width: 200px;
+    transition: transform 0.2s, box-shadow 0.2s;
 }
 
-/* =========================
-   CLUSTER CARDS
-========================= */
+.metric-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0,255,136,0.1);
+}
+
+.metric-label {
+    font-size: 13px;
+    color: #7a8aaa;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.metric-value {
+    font-size: 36px;
+    font-weight: bold;
+    color: #e0e6ff;
+}
+
+.metric-value.committed { color: #00ff88; }
+.metric-value.pending   { color: #f39c12; }
+.metric-value.heartbeat { color: #e74c3c; }
+.metric-value.election  { color: #9b59b6; }
+
+/* ========================
+   CLUSTER HEALTH
+======================== */
+.health-section {
+    max-width: 600px;
+    margin: 0 auto 10px;
+    padding: 0 20px;
+}
+
+.health-label {
+    font-size: 18px;
+    margin-bottom: 12px;
+    color: #aac4ff;
+}
+
+.health-bar-track {
+    background: #1e2a45;
+    border-radius: 999px;
+    height: 22px;
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+
+.health-bar-fill {
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #00ff88, #00c9ff);
+    transition: width 0.6s ease, background 0.4s;
+}
+
+.health-bar-fill.warn  { background: linear-gradient(90deg, #f39c12, #e67e22); }
+.health-bar-fill.crit  { background: linear-gradient(90deg, #e74c3c, #c0392b); }
+
+.health-percent {
+    font-size: 28px;
+    font-weight: bold;
+    color: #00ff88;
+}
+
+/* ========================
+   CLUSTER NODE CARDS
+======================== */
 .cluster {
     display: flex;
     justify-content: center;
@@ -100,28 +175,87 @@ h1 {
     font-size: 22px;
 }
 
-/* ONLINE */
 .online {
     background: #27ae60 !important;
     box-shadow: 0 0 20px #27ae60;
 }
 
-/* OFFLINE */
 .offline {
     background: #c0392b !important;
     box-shadow: 0 0 20px #c0392b;
 }
 
-/* LEADER */
 .leader {
-    box-shadow:
-        0 0 15px gold,
-        0 0 30px gold,
-        0 0 50px gold;
+    box-shadow: 0 0 15px gold, 0 0 30px gold, 0 0 50px gold;
     border: 3px solid gold;
 }
 
-/* LOGS */
+/* ========================
+   LIVE EVENT STREAM
+======================== */
+.events-list {
+    max-width: 700px;
+    margin: 0 auto 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 0 20px;
+    max-height: 420px;
+    overflow-y: auto;
+}
+
+.event-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: #161b2d;
+    border: 1px solid #1e2a45;
+    border-radius: 12px;
+    padding: 12px 18px;
+    text-align: left;
+    animation: slideIn 0.35s ease;
+}
+
+.event-card.offline-event {
+    border-color: #c0392b;
+    background: #1e0a0a;
+}
+
+.event-card.leader-event {
+    border-color: gold;
+    background: #1e1a00;
+}
+
+.event-card.commit-event {
+    border-color: #00ff88;
+    background: #001e10;
+}
+
+@keyframes slideIn {
+    from { opacity: 0; transform: translateX(40px); }
+    to   { opacity: 1; transform: translateX(0);    }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+.event-time {
+    font-size: 12px;
+    color: #5a6a8a;
+    white-space: nowrap;
+    min-width: 60px;
+}
+
+.event-msg {
+    font-size: 15px;
+    color: #d0dcff;
+}
+
+/* ========================
+   LOGS
+======================== */
 pre {
     width: 85%;
     margin: auto;
@@ -132,41 +266,21 @@ pre {
     overflow: auto;
 }
 
-/* HR */
-hr {
-    margin-top: 40px;
-    margin-bottom: 40px;
+
+@keyframes crash{
+
+0%{
+transform:scale(1);
 }
 
-.metrics-container{
-
-    display:flex;
-
-    justify-content:center;
-
-    gap:30px;
-
-    margin-top:40px;
-
+50%{
+transform:scale(1.2);
+background:red;
 }
 
-.metric-card{
-
-    width:220px;
-
-    padding:25px;
-
-    border-radius:20px;
-
-    background:#18263d;
-
-    box-shadow:
-    0 0 20px rgba(0,255,100,.2);
-
+100%{
+transform:scale(0.9);
+opacity:0.6;
 }
-
-.metric-card h1{
-
-    color:#00ff88;
 
 }

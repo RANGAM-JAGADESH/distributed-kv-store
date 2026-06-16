@@ -2,7 +2,6 @@ import threading
 import time
 from datetime import datetime
 import os
-
 import requests
 
 import app.heartbeat as hb
@@ -13,7 +12,12 @@ from app.heartbeat import (
     configure_followers
 )
 
-NODE_ID = os.getenv("NODE_ID")
+from app.event_manager import add_event
+
+NODE_ID = os.getenv(
+    "NODE_ID",
+    "node1"
+)
 
 ELECTION_TIMEOUT = 5
 
@@ -24,15 +28,26 @@ def start_election():
 
     global is_candidate
 
+    raft.current_role = "candidate"
+
     votes = 1
 
-    print("Requesting votes...")
+    print(
+        f"{NODE_ID} requesting votes..."
+    )
 
     other_nodes = []
 
     if NODE_ID == "node2":
+
         other_nodes = [
             "http://127.0.0.1:8002"
+        ]
+
+    elif NODE_ID == "node3":
+
+        other_nodes = [
+            "http://127.0.0.1:8001"
         ]
 
     for node in other_nodes:
@@ -48,7 +63,11 @@ def start_election():
 
             result = response.json()
 
-            if result["vote_granted"]:
+            if result.get(
+                "vote_granted",
+                False
+            ):
+
                 votes += 1
 
         except Exception as e:
@@ -64,15 +83,34 @@ def start_election():
     if votes >= 2:
 
         raft.current_role = "leader"
+
         raft.current_leader = NODE_ID
+
+        raft.current_term += 1
+
+        raft.election_count += 1
+
+        raft.leader_changes += 1
 
         print(
             f"🎉 {NODE_ID} elected as Leader!"
         )
 
-        configure_followers([
-            "http://127.0.0.1:8002"
-        ])
+        add_event(
+            f"👑 {NODE_ID} elected as Leader"
+        )
+
+        if NODE_ID == "node2":
+
+            configure_followers([
+                "http://127.0.0.1:8002"
+            ])
+
+        elif NODE_ID == "node3":
+
+            configure_followers([
+                "http://127.0.0.1:8001"
+            ])
 
         start_heartbeat()
 
@@ -97,7 +135,9 @@ def monitor_heartbeat():
         if elapsed > ELECTION_TIMEOUT:
 
             if NODE_ID != "node2":
+
                 time.sleep(1)
+
                 continue
 
             if not is_candidate:
@@ -108,6 +148,10 @@ def monitor_heartbeat():
 
                 print(
                     "Starting Election..."
+                )
+
+                add_event(
+                    "🗳️ Election Started"
                 )
 
                 is_candidate = True

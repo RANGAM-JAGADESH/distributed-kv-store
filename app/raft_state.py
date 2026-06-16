@@ -1,9 +1,13 @@
-current_term = 0
-
-voted_for = None
-
 current_role = "follower"
 
 current_leader = "node1"
 
+voted_for = None
+
 commit_index = 0
+
+current_term = 1
+
+election_count = 0
+
+leader_changes = 0
