@@ -464,3 +464,9 @@ def snapshot():
     return {
         "status": "snapshot created"
     }
+    
+    
+@app.get("/store")
+def get_store():
+
+    return store.data

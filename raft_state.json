@@ -2,7 +2,7 @@
     "current_role": "leader",
     "current_leader": "node1",
     "voted_for": null,
-    "commit_index": 10,
+    "commit_index": 0,
     "current_term": 1,
     "election_count": 0,
     "leader_changes": 0
