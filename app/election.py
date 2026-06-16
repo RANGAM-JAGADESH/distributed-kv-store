@@ -91,7 +91,7 @@ def start_election():
         raft.election_count += 1
 
         raft.leader_changes += 1
-
+        raft.save_raft_state()
         print(
             f"🎉 {NODE_ID} elected as Leader!"
         )
