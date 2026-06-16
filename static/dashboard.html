@@ -1,109 +1,349 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Distributed KV Store Dashboard</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Distributed KV Store — Console</title>
     <link rel="stylesheet" href="/static/dashboard.css">
 </head>
 <body>
 
-    <h1>Distributed KV Store Dashboard</h1>
+<!-- ══════════════════════════════════════
+     HEADER
+══════════════════════════════════════ -->
+<header class="header">
+    <div class="header-left">
+        <div class="header-logo">⚡</div>
+        <div>
+            <div class="header-title">Distributed KV Store</div>
+            <div class="header-sub">Raft Consensus Monitor · Phase 8</div>
+        </div>
+    </div>
+    <div class="header-right">
+        <div class="pulse-dot" id="refreshDot"></div>
+        <span class="refresh-label">Live · 2s</span>
+        <div class="header-time" id="headerTime">--:--:--</div>
+    </div>
+</header>
 
-    <!-- TOPOLOGY -->
+<!-- ══════════════════════════════════════
+     TOPOLOGY
+══════════════════════════════════════ -->
+<section class="section">
+    <div class="section-title">🕸️ Cluster Topology</div>
+
     <div class="topology" id="topology">
-        <div id="top-node1" class="node">👑 Node1</div>
-        <div id="top-node2" class="node">Node2</div>
-        <div id="top-node3" class="node">Node3</div>
+
+        <div id="top-node1" class="topo-node" data-node="node1">
+            <div class="topo-crown" id="crown-node1">👑</div>
+            <div class="topo-ring" id="ring-node1"></div>
+            <div class="topo-icon">⬡</div>
+            <div class="topo-name">Node 1</div>
+            <div class="topo-badge" id="badge-node1">LEADER</div>
+        </div>
+
+        <div id="top-node2" class="topo-node" data-node="node2">
+            <div class="topo-crown hidden" id="crown-node2">👑</div>
+            <div class="topo-ring hidden" id="ring-node2"></div>
+            <div class="topo-icon">⬡</div>
+            <div class="topo-name">Node 2</div>
+            <div class="topo-badge follower" id="badge-node2">FOLLOWER</div>
+        </div>
+
+        <div id="top-node3" class="topo-node" data-node="node3">
+            <div class="topo-crown hidden" id="crown-node3">👑</div>
+            <div class="topo-ring hidden" id="ring-node3"></div>
+            <div class="topo-icon">⬡</div>
+            <div class="topo-name">Node 3</div>
+            <div class="topo-badge follower" id="badge-node3">FOLLOWER</div>
+        </div>
+
+        <!-- SVG heartbeat lines -->
         <svg id="hb-svg" aria-hidden="true">
             <defs>
-                <radialGradient id="pglow" cx="50%" cy="50%" r="50%">
+                <radialGradient id="glow-green" cx="50%" cy="50%" r="50%">
                     <stop offset="0%"   stop-color="#00ff88" stop-opacity="1"/>
                     <stop offset="100%" stop-color="#00ff88" stop-opacity="0"/>
                 </radialGradient>
+                <radialGradient id="glow-orange" cx="50%" cy="50%" r="50%">
+                    <stop offset="0%"   stop-color="#f39c12" stop-opacity="1"/>
+                    <stop offset="100%" stop-color="#f39c12" stop-opacity="0"/>
+                </radialGradient>
+                <filter id="line-glow">
+                    <feGaussianBlur stdDeviation="2" result="blur"/>
+                    <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                </filter>
             </defs>
         </svg>
+
     </div>
 
-    <!-- LEADER / ROLE / COMMIT -->
-    <div class="info">
-        <h2 id="leader">Leader: Loading...</h2>
-        <h2 id="role">Role: Loading...</h2>
-        <h2 id="commit-index">0</h2>
+    <!-- Heartbeat status banner -->
+    <div class="hb-status-bar" id="hbStatusBar">
+        <span class="hb-dot green" id="hbDot"></span>
+        <span id="hbStatusText">Heartbeat Active</span>
     </div>
+</section>
 
-    <hr>
+<!-- ══════════════════════════════════════
+     LEADER + ROLE PILLS
+══════════════════════════════════════ -->
+<div class="pills-row">
+    <div class="pill leader-pill">
+        <span class="pill-icon">👑</span>
+        <span class="pill-label">Leader</span>
+        <span class="pill-value" id="leaderVal">Loading...</span>
+    </div>
+    <div class="pill role-pill">
+        <span class="pill-icon">🎭</span>
+        <span class="pill-label">My Role</span>
+        <span class="pill-value" id="roleVal">Loading...</span>
+    </div>
+    <div class="pill commit-pill">
+        <span class="pill-icon">🔢</span>
+        <span class="pill-label">Commit Index</span>
+        <span class="pill-value" id="commitVal">0</span>
+    </div>
+    <div class="pill health-pill">
+        <span class="pill-icon">🩺</span>
+        <span class="pill-label">Cluster Health</span>
+        <span class="pill-value" id="healthPillVal">—</span>
+    </div>
+</div>
 
-    <!-- METRICS CARDS -->
-    <h3>📊 Cluster Metrics</h3>
+<!-- ══════════════════════════════════════
+     METRICS GRID
+══════════════════════════════════════ -->
+<section class="section">
+    <div class="section-title">📊 Real-Time Raft Statistics</div>
+
     <div class="metrics-grid">
-        <div class="metric-card">
-            <div class="metric-label">Total Logs</div>
-            <div class="metric-value" id="totalLogs">0</div>
+
+        <div class="metric-card" id="mc-totalLogs">
+            <div class="mc-top">
+                <span class="mc-icon">📋</span>
+                <span class="mc-trend" id="trend-totalLogs"></span>
+            </div>
+            <div class="mc-value" id="m-totalLogs">0</div>
+            <div class="mc-label">Total Logs</div>
+            <div class="mc-bar-track"><div class="mc-bar" id="bar-totalLogs" style="width:0%"></div></div>
         </div>
-        <div class="metric-card">
-            <div class="metric-label">Committed Logs</div>
-            <div class="metric-value committed" id="committedLogs">0</div>
+
+        <div class="metric-card green-card" id="mc-committed">
+            <div class="mc-top">
+                <span class="mc-icon">✅</span>
+                <span class="mc-trend" id="trend-committed"></span>
+            </div>
+            <div class="mc-value green" id="m-committed">0</div>
+            <div class="mc-label">Committed Logs</div>
+            <div class="mc-bar-track"><div class="mc-bar green-bar" id="bar-committed" style="width:0%"></div></div>
         </div>
-        <div class="metric-card">
-            <div class="metric-label">Pending Logs</div>
-            <div class="metric-value pending" id="pendingLogs">0</div>
+
+        <div class="metric-card orange-card" id="mc-pending">
+            <div class="mc-top">
+                <span class="mc-icon">⏳</span>
+                <span class="mc-trend" id="trend-pending"></span>
+            </div>
+            <div class="mc-value orange" id="m-pending">0</div>
+            <div class="mc-label">Pending Logs</div>
+            <div class="mc-bar-track"><div class="mc-bar orange-bar" id="bar-pending" style="width:0%"></div></div>
         </div>
-        <div class="metric-card">
-            <div class="metric-label">Commit Index</div>
-            <div class="metric-value" id="commitIndex">0</div>
+
+        <div class="metric-card blue-card" id="mc-commitIdx">
+            <div class="mc-top">
+                <span class="mc-icon">🔢</span>
+                <span class="mc-trend" id="trend-commitIdx"></span>
+            </div>
+            <div class="mc-value blue" id="m-commitIdx">0</div>
+            <div class="mc-label">Commit Index</div>
+            <div class="mc-bar-track"><div class="mc-bar blue-bar" id="bar-commitIdx" style="width:0%"></div></div>
         </div>
-        <div class="metric-card">
-            <div class="metric-label">💓 Heartbeats Sent</div>
-            <div class="metric-value heartbeat" id="heartbeatCount">0</div>
+
+        <div class="metric-card red-card" id="mc-heartbeats">
+            <div class="mc-top">
+                <span class="mc-icon">💓</span>
+                <span class="mc-trend" id="trend-heartbeats"></span>
+            </div>
+            <div class="mc-value red" id="m-heartbeats">0</div>
+            <div class="mc-label">Heartbeats Sent</div>
+            <div class="mc-bar-track"><div class="mc-bar red-bar" style="width:100%"></div></div>
         </div>
-        <div class="metric-card">
-            <div class="metric-label">🗳️ Elections</div>
-            <div class="metric-value election" id="electionCount">0</div>
+
+        <div class="metric-card purple-card" id="mc-elections">
+            <div class="mc-top">
+                <span class="mc-icon">🗳️</span>
+                <span class="mc-trend" id="trend-elections"></span>
+            </div>
+            <div class="mc-value purple" id="m-elections">0</div>
+            <div class="mc-label">Elections Held</div>
+            <div class="mc-bar-track"><div class="mc-bar purple-bar" id="bar-elections" style="width:0%"></div></div>
+        </div>
+
+    </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     HEALTH GAUGE  +  RAFT STATS PANEL
+══════════════════════════════════════ -->
+<section class="section">
+    <div class="two-col">
+
+        <!-- Circular gauge -->
+        <div class="gauge-panel">
+            <div class="section-title">🩺 Cluster Health</div>
+            <div class="gauge-wrap">
+                <svg class="gauge-svg" viewBox="0 0 220 220">
+                    <circle class="g-track"  cx="110" cy="110" r="90"/>
+                    <circle class="g-fill"   cx="110" cy="110" r="90"
+                            id="gaugeFill"
+                            stroke-dasharray="565.5"
+                            stroke-dashoffset="565.5"/>
+                    <circle class="g-inner"  cx="110" cy="110" r="72"/>
+                </svg>
+                <div class="gauge-text">
+                    <div class="gauge-pct"   id="gaugePct">0%</div>
+                    <div class="gauge-sub"   id="gaugeSub">0 / 3 online</div>
+                </div>
+            </div>
+            <!-- Linear bar below gauge -->
+            <div class="health-bar-row">
+                <div class="health-bar-track">
+                    <div class="health-bar-fill" id="healthBarFill" style="width:0%"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Raft stats table -->
+        <div class="raft-panel">
+            <div class="section-title">⚙️ Raft Consensus Panel</div>
+            <div class="raft-grid">
+
+                <div class="raft-row">
+                    <span class="raft-key">Current Leader</span>
+                    <span class="raft-val" id="r-leader">—</span>
+                </div>
+                <div class="raft-row">
+                    <span class="raft-key">My Role</span>
+                    <span class="raft-val" id="r-role">—</span>
+                </div>
+                <div class="raft-row">
+                    <span class="raft-key">Commit Index</span>
+                    <span class="raft-val mono" id="r-commit">0</span>
+                </div>
+                <div class="raft-row">
+                    <span class="raft-key">Total Logs</span>
+                    <span class="raft-val mono" id="r-total">0</span>
+                </div>
+                <div class="raft-row">
+                    <span class="raft-key">Committed Logs</span>
+                    <span class="raft-val mono green" id="r-committed">0</span>
+                </div>
+                <div class="raft-row">
+                    <span class="raft-key">Pending Logs</span>
+                    <span class="raft-val mono orange" id="r-pending">0</span>
+                </div>
+                <div class="raft-row">
+                    <span class="raft-key">Elections</span>
+                    <span class="raft-val mono purple" id="r-elections">0</span>
+                </div>
+                <div class="raft-row">
+                    <span class="raft-key">Leader Changes</span>
+                    <span class="raft-val mono" id="r-leaderChanges">0</span>
+                </div>
+                <div class="raft-row">
+                    <span class="raft-key">Heartbeats Sent</span>
+                    <span class="raft-val mono red" id="r-hb">0</span>
+                </div>
+                <div class="raft-row">
+                    <span class="raft-key">Log Efficiency</span>
+                    <span class="raft-val mono" id="r-eff">—</span>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     NODE STATUS CARDS
+══════════════════════════════════════ -->
+<section class="section">
+    <div class="section-title">🖥️ Node Status</div>
+    <div class="node-cards">
+
+        <div class="node-card" id="card-node1">
+            <div class="nc-header">
+                <span class="nc-dot" id="dot-node1"></span>
+                <span class="nc-name">Node 1</span>
+                <span class="nc-leader-badge hidden" id="lbadge-node1">👑 LEADER</span>
+            </div>
+            <div class="nc-status" id="ncs-node1">Checking...</div>
+            <div class="nc-role"   id="ncr-node1">—</div>
+            <div class="nc-port">Port: 8000</div>
+        </div>
+
+        <div class="node-card" id="card-node2">
+            <div class="nc-header">
+                <span class="nc-dot" id="dot-node2"></span>
+                <span class="nc-name">Node 2</span>
+                <span class="nc-leader-badge hidden" id="lbadge-node2">👑 LEADER</span>
+            </div>
+            <div class="nc-status" id="ncs-node2">Checking...</div>
+            <div class="nc-role"   id="ncr-node2">—</div>
+            <div class="nc-port">Port: 8001</div>
+        </div>
+
+        <div class="node-card" id="card-node3">
+            <div class="nc-header">
+                <span class="nc-dot" id="dot-node3"></span>
+                <span class="nc-name">Node 3</span>
+                <span class="nc-leader-badge hidden" id="lbadge-node3">👑 LEADER</span>
+            </div>
+            <div class="nc-status" id="ncs-node3">Checking...</div>
+            <div class="nc-role"   id="ncr-node3">—</div>
+            <div class="nc-port">Port: 8002</div>
+        </div>
+
+    </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     LIVE EVENT STREAM
+══════════════════════════════════════ -->
+<section class="section">
+    <div class="event-header-row">
+        <div class="section-title" style="margin-bottom:0">📜 Live Event Stream</div>
+        <div class="event-controls">
+            <span class="event-count-badge" id="eventBadge">0 events</span>
+            <button class="ctrl-btn" onclick="clearEvents()">🗑 Clear</button>
+            <button class="ctrl-btn" onclick="togglePause()" id="pauseBtn">⏸ Pause</button>
         </div>
     </div>
-
-    <hr>
-
-    <!-- CLUSTER HEALTH -->
-    <h3>🩺 Cluster Health</h3>
-    <div class="health-section">
-        <div class="health-label" id="healthLabel">Checking...</div>
-        <div class="health-bar-track">
-            <div class="health-bar-fill" id="healthBar" style="width:0%"></div>
-        </div>
-        <div class="health-percent" id="healthPercent">0%</div>
+    <div class="event-filter-row">
+        <button class="filter-btn active" data-filter="all"        onclick="setFilter(this,'all')">All</button>
+        <button class="filter-btn"        data-filter="leader"     onclick="setFilter(this,'leader')">👑 Leader</button>
+        <button class="filter-btn"        data-filter="election"   onclick="setFilter(this,'election')">🗳️ Election</button>
+        <button class="filter-btn"        data-filter="heartbeat"  onclick="setFilter(this,'heartbeat')">💓 Heartbeat</button>
+        <button class="filter-btn"        data-filter="replication"onclick="setFilter(this,'replication')">📦 Replication</button>
+        <button class="filter-btn"        data-filter="crash"      onclick="setFilter(this,'crash')">❌ Crash</button>
     </div>
-
-    <hr>
-
-    <!-- CLUSTER NODES -->
-    <h3>Cluster Nodes</h3>
-    <div class="cluster">
-        <div id="node1" class="node">
-            Node1
-            <div id="status1">Checking...</div>
-        </div>
-        <div id="node2" class="node">
-            Node2
-            <div id="status2">Checking...</div>
-        </div>
-        <div id="node3" class="node">
-            Node3
-            <div id="status3">Checking...</div>
-        </div>
-    </div>
-
-    <hr>
-
-    <!-- LIVE EVENT STREAM -->
-    <h3>📜 Live Event Stream</h3>
     <div id="events" class="events-list"></div>
+</section>
 
-    <hr>
-
-    <!-- LOGS -->
-    <h2>Logs</h2>
+<!-- ══════════════════════════════════════
+     RAFT LOGS
+══════════════════════════════════════ -->
+<section class="section">
+    <div class="section-title">📁 Raft Log Entries</div>
     <pre id="logs"></pre>
+</section>
 
-    <script src="/static/dashboard.js"></script>
+<!-- Footer -->
+<footer class="footer">
+    Distributed KV Store · Raft Consensus · Phase 8 · Auto-refresh 2s
+</footer>
+
+<script src="/static/dashboard.js"></script>
 </body>
 </html>
