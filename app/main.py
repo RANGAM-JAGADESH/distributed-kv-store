@@ -81,13 +81,17 @@ add_event("🔄 Recovery Started")
 @app.on_event("startup")
 def startup_event():
 
-    add_event("🟢 Node Started")
     print("Starting Node...")
 
     if is_leader():
 
+        raft.current_role = "leader"
+
+        raft.current_leader = "node1"
+
+        raft.save_raft_state()
+
         print("Leader Node Started")
-        add_event("👑 New Leader Elected")
 
         configure_followers([
             "http://127.0.0.1:8001",
@@ -98,7 +102,12 @@ def startup_event():
 
     else:
 
+        raft.current_role = "follower"
+
+        raft.save_raft_state()
+
         print("Follower Node Started")
+
         start_election_monitor()
 
 
