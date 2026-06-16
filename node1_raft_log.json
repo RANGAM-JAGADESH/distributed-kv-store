@@ -54,5 +54,33 @@
         "key": "name",
         "value": "jagadeshhh",
         "committed": false
+    },
+    {
+        "index": 9,
+        "operation": "SET",
+        "key": "school",
+        "value": "akshara",
+        "committed": false
+    },
+    {
+        "index": 10,
+        "operation": "SET",
+        "key": "school",
+        "value": "akshara",
+        "committed": false
+    },
+    {
+        "index": 11,
+        "operation": "SET",
+        "key": "test",
+        "value": "0403",
+        "committed": false
+    },
+    {
+        "index": 12,
+        "operation": "SET",
+        "key": "test",
+        "value": "0403",
+        "committed": true
     }
 ]

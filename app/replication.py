@@ -33,12 +33,19 @@ def replicate_log(entry):
                 json=entry
             )
 
+            print(
+                f"{node} -> {response.status_code}"
+            )
+
             if response.status_code == 200:
 
                 acknowledgements += 1
 
-        except:
-            pass
+        except Exception as e:
+
+            print(
+                f"{node} failed: {e}"
+            )
 
     return acknowledgements
 

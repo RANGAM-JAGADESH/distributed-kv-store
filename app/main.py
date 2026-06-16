@@ -37,7 +37,10 @@ from app.event_manager import (
     increment_election
 )
 
-
+from app.snapshot_manager import (
+    create_snapshot,
+    load_snapshot
+)
 
 from fastapi.responses import FileResponse
 
@@ -64,6 +67,8 @@ app.mount(
 recover_state()
 
 raft.load_raft_state()
+
+load_snapshot()
 
 recover_state_machine()
 add_event("🔄 Recovery Started")
@@ -419,4 +424,14 @@ def test123():
 
     return {
         "message": "hello bro"
+    }
+    
+    
+@app.get("/snapshot")
+def snapshot():
+
+    create_snapshot()
+
+    return {
+        "status": "snapshot created"
     }
