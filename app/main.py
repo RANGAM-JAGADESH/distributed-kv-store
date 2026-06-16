@@ -4,7 +4,7 @@ from app.snapshot_manager import (
     truncate_logs
 )
 
-
+from app.sync_manager import sync_from_leader
 
 from app.state_machine import recover_state_machine
 from fastapi import FastAPI
@@ -108,11 +108,10 @@ def startup_event():
     else:
 
         raft.current_role = "follower"
-
         raft.save_raft_state()
-
+        
         print("Follower Node Started")
-
+        sync_from_leader()
         start_election_monitor()
 
 
@@ -470,3 +469,21 @@ def snapshot():
 def get_store():
 
     return store.data
+
+
+@app.get("/missing_logs")
+def get_missing_logs(last_index: int):
+
+    logs = get_logs()
+
+    missing = [
+
+        log
+
+        for log in logs
+
+        if log["index"] > last_index
+
+    ]
+
+    return missing
