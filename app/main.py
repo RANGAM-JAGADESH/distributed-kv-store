@@ -326,3 +326,21 @@ def health():
         "status": "online",
         "node": raft.current_leader
     }
+    
+    
+@app.get("/metrics")
+def metrics():
+
+    logs = get_logs()
+
+    committed = len(
+        [l for l in logs if l.get("committed")]
+    )
+
+    return {
+        "total_logs": len(logs),
+        "committed_logs": committed,
+        "commit_index": raft.commit_index,
+        "leader": raft.current_leader,
+        "role": raft.current_role
+    }

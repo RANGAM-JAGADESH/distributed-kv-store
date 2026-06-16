@@ -26,5 +26,26 @@
         "key": "name",
         "value": "jaga",
         "committed": true
+    },
+    {
+        "index": 5,
+        "operation": "SET",
+        "key": "name",
+        "value": "jagadesh",
+        "committed": true
+    },
+    {
+        "index": 6,
+        "operation": "SET",
+        "key": "city",
+        "value": "kothapeta",
+        "committed": true
+    },
+    {
+        "index": 7,
+        "operation": "SET",
+        "key": "school",
+        "value": "boys town",
+        "committed": true
     }
 ]

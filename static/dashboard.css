@@ -137,3 +137,36 @@ hr {
     margin-top: 40px;
     margin-bottom: 40px;
 }
+
+.metrics-container{
+
+    display:flex;
+
+    justify-content:center;
+
+    gap:30px;
+
+    margin-top:40px;
+
+}
+
+.metric-card{
+
+    width:220px;
+
+    padding:25px;
+
+    border-radius:20px;
+
+    background:#18263d;
+
+    box-shadow:
+    0 0 20px rgba(0,255,100,.2);
+
+}
+
+.metric-card h1{
+
+    color:#00ff88;
+
+}

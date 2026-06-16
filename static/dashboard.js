@@ -214,8 +214,30 @@ async function refreshDashboard() {
     checkNode("http://127.0.0.1:8001/health", "node2", "status2");
     checkNode("http://127.0.0.1:8002/health", "node3", "status3");
 
-}
 
+
+    let metricsResponse =
+    await fetch("/metrics");
+
+    let metrics =
+    await metricsResponse.json();
+
+    document
+    .getElementById("totalLogs")
+    .innerText =
+    metrics.total_logs;
+
+    document
+    .getElementById("committedLogs")
+    .innerText =
+    metrics.committed_logs;
+
+    document
+    .getElementById("commitIndex")
+    .innerText =
+    metrics.commit_index;
+
+}
 
 // Initial load + polling every 2 seconds
 refreshDashboard();
