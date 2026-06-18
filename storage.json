@@ -1,7 +1,7 @@
 {
-    "name": "jagadesh",
+    "name": "jashu",
     "nameu": "jashuu",
-    "college": "query",
+    "college": "vemu",
     "city": "kothapeta",
     "test": "0403",
     "school": "boys town",
@@ -14,5 +14,8 @@
     "g": "7",
     "h": "8",
     "i": "9",
-    "j": "10"
+    "j": "10",
+    "year": "III",
+    "group": "AI",
+    "PROJECT": "RAFT CONSENSUS"
 }

@@ -1,1 +1,37 @@
-[]
+[
+    {
+        "index": 1,
+        "operation": "SET",
+        "key": "name",
+        "value": "jashu",
+        "committed": true
+    },
+    {
+        "index": 2,
+        "operation": "SET",
+        "key": "college",
+        "value": "vemu",
+        "committed": true
+    },
+    {
+        "index": 3,
+        "operation": "SET",
+        "key": "year",
+        "value": "III",
+        "committed": true
+    },
+    {
+        "index": 4,
+        "operation": "SET",
+        "key": "group",
+        "value": "AI",
+        "committed": true
+    },
+    {
+        "index": 5,
+        "operation": "SET",
+        "key": "PROJECT",
+        "value": "RAFT CONSENSUS",
+        "committed": true
+    }
+]

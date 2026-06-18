@@ -622,6 +622,16 @@ body {
     box-shadow: 0 0 20px rgba(255,215,0,0.2), 0 0 50px rgba(255,215,0,0.08);
 }
 
+/* crown-leader: applied to topology nodes AND node cards
+   whenever that node is the current Raft leader            */
+.crown-leader {
+    box-shadow:
+        0 0 10px gold,
+        0 0 25px gold,
+        0 0 50px rgba(255,215,0,0.4);
+    border: 3px solid gold !important;
+}
+
 .nc-header {
     display: flex;
     align-items: center;
@@ -838,38 +848,4 @@ pre {
     color: var(--text3);
     border-top: 1px solid var(--border);
     margin-top: 40px;
-}
-
-
-.health-panel{
-
-    display:flex;
-
-    justify-content:center;
-
-    gap:30px;
-
-    margin-top:20px;
-
-}
-
-.health-card{
-
-    background:#1f2937;
-
-    padding:20px;
-
-    width:220px;
-
-    border-radius:15px;
-
-    box-shadow:
-    0 0 20px rgba(0,255,136,.2);
-
-}
-
-.health-card h1{
-
-    color:#00ff88;
-
 }

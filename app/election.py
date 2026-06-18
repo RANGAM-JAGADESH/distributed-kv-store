@@ -69,6 +69,9 @@ def start_election():
             ):
 
                 votes += 1
+                add_event(
+                    f"✅ Vote received from {node}"
+                )
 
         except Exception as e:
 
@@ -134,11 +137,7 @@ def monitor_heartbeat():
 
         if elapsed > ELECTION_TIMEOUT:
 
-            if NODE_ID != "node2":
-
-                time.sleep(1)
-
-                continue
+            
 
             if not is_candidate:
 
